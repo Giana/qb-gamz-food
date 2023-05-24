@@ -10,17 +10,17 @@ end)
 Citizen.CreateThread(function()
 
     for place, value in pairs(Config.Zones) do
-		local blip = AddBlipForCoord(value["coords"].x, value["coords"].y)
-		SetBlipSprite (blip, 238)
-		SetBlipDisplay(blip, 4)
-		SetBlipScale  (blip, 0.6)
-		SetBlipColour (blip, 69)
-		SetBlipAsShortRange(blip, true)
-		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString(place)
-		EndTextCommandSetBlipName(blip)
+        local blip = AddBlipForCoord(value["coords"].x, value["coords"].y)
+        SetBlipSprite(blip, 238)
+        SetBlipDisplay(blip, 4)
+        SetBlipScale(blip, 0.6)
+        SetBlipColour(blip, 69)
+        SetBlipAsShortRange(blip, true)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(place)
+        EndTextCommandSetBlipName(blip)
     end
-    
+
     while true do
         local sleepTime = 500
         local coords = GetEntityCoords(PlayerPedId())
@@ -29,9 +29,9 @@ Citizen.CreateThread(function()
             local dst = GetDistanceBetweenCoords(coords, value["coords"], true)
             local text = place
 
-            if dst <= 7.5 then 
+            if dst <= 7.5 then
                 sleepTime = 5
-                
+
                 if dst <= 1.25 then
                     text = "[~r~E~w~] " .. place
                     if IsControlJustReleased(0, 38) then
@@ -39,7 +39,7 @@ Citizen.CreateThread(function()
                     end
                 end
 
-                Marker(text, value["coords"].x, value["coords"].y, value["coords"].z - 0.98) 
+                Marker(text, value["coords"].x, value["coords"].y, value["coords"].z - 0.98)
             end
         end
 
@@ -50,22 +50,22 @@ end)
 FoodStand = function(place)
 
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'food_stand',
-    {
-        title    = place,
-        align    = 'center',
-        elements = {
-            { ["label"] = "Food", ["type"] = "eatable" },
-            { ["label"] = "Drinks", ["type"] = "drink" }
-        }
-    }, function(data, menu)
+            {
+                title = place,
+                align = 'center',
+                elements = {
+                    { ["label"] = "Food", ["type"] = "eatable" },
+                    { ["label"] = "Drinks", ["type"] = "drink" }
+                }
+            }, function(data, menu)
 
-        local type = data.current.type
+                local type = data.current.type
 
-        FoodMenu(place, type)
+                FoodMenu(place, type)
 
-    end, function(data, menu)
-        menu.close() 
-    end)
+            end, function(data, menu)
+                menu.close()
+            end)
 end
 
 FoodMenu = function(place, type)
@@ -86,27 +86,27 @@ FoodMenu = function(place, type)
     end
 
     ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'food_menu',
-    {
-        title    = place,
-        align    = 'center',
-        elements = elements
-    }, function(data, menu)
-        
-        ESX.UI.Menu.CloseAll()
+            {
+                title = place,
+                align = 'center',
+                elements = elements
+            }, function(data, menu)
 
-        if MoneyCheck(data.current.price) then
-            TriggerServerEvent("gamz-food:removeMoney", data.current.price)
+                ESX.UI.Menu.CloseAll()
 
-            ESX.ShowNotification("You bought a " .. data.current.label)
+                if MoneyCheck(data.current.price) then
+                    TriggerServerEvent("gamz-food:removeMoney", data.current.price)
 
-            Consume(data.current.prop, type)
-        else
-            ESX.ShowNotification("You do not have enough cash")
-        end
+                    ESX.ShowNotification("You bought a " .. data.current.label)
 
-    end, function(data, menu)
-        menu.close() 
-    end)
+                    Consume(data.current.prop, type)
+                else
+                    ESX.ShowNotification("You do not have enough cash")
+                end
+
+            end, function(data, menu)
+                menu.close()
+            end)
 end
 
 Consume = function(prop, type)
@@ -122,7 +122,7 @@ Consume = function(prop, type)
 
     local coords = GetEntityCoords(PlayerPedId())
 
-    local prop = CreateObject(GetHashKey(prop), coords + vector3(0.0, 0.0, 0.2),  true,  true, true)
+    local prop = CreateObject(GetHashKey(prop), coords + vector3(0.0, 0.0, 0.2), true, true, true)
 
     if type == "drink" then
         AttachEntityToEntity(prop, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 18905), 0.15, 0.025, 0.010, 270.0, 175.0, 0.0, true, true, false, true, 1, true)
@@ -140,12 +140,12 @@ Consume = function(prop, type)
         type = "hunger"
     end
 
-    for i=1, 50 do
+    for i = 1, 50 do
         Wait(300)
         TriggerEvent('esx_status:add', type, 10000)
-      --  exports["gamz-status"]:SetStatus("Hunger", 0.7)
+        --  exports["gamz-status"]:SetStatus("Hunger", 0.7)
     end
-    
+
     ClearPedSecondaryTask(PlayerPedId())
     DeleteObject(prop)
 

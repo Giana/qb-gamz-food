@@ -15,9 +15,9 @@ Config.Zones = {
             ["Sparkling Water"] = {
                 ["price"] = 15,
                 ["prop"] = "prop_ld_flow_bottle"
-            } 
+            }
         },
-        
+
         ["eatable"] = {
             ["Burger"] = {
                 ["price"] = 79,
