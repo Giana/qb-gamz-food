@@ -78,13 +78,21 @@ function foodMenu(place, type)
     exports['qb-menu']:openMenu(menu)
 end
 
+function loadModel(model)
+    while not HasModelLoaded(model) do
+        Wait(0)
+        RequestModel(model)
+    end
+    return model
+end
+
 function consume(prop, type)
-    local coords = GetEntityCoords(PlayerPedId())
-    local prop = CreateObject(GetHashKey(prop), coords + vector3(0.0, 0.0, 0.2), true, true, true)
+    local ped = PlayerPedId()
+    local model = loadModel(prop)
+    local prop = CreateObject(model, GetEntityCoords(ped), true, false, false)
     if type == 'food' then
-        AttachEntityToEntity(prop, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 18905), 0.12, 0.028, 0.001, 10.0, 175.0, 0.0, true, true, false, true, 1, true)
-        TriggerEvent('animations:client:EmoteCommandStart', { 'eat' })
-        QBCore.Functions.Progressbar('eat_something', 'Eating...', 5000, false, true, {
+        AttachEntityToEntity(prop, ped, GetPedBoneIndex(ped, 18905), 0.12, 0.028, 0.001, 10.0, 175.0, 0.0, true, true, false, true, 1, true)
+        QBCore.Functions.Progressbar('eat_something', 'Eating...', 2500, false, true, {
             disableMovement = false,
             disableCarMovement = false,
             disableMouse = false,
@@ -93,22 +101,22 @@ function consume(prop, type)
             -- Animation
             animDict = 'mp_player_inteat@burger',
             anim = 'mp_player_int_eat_burger_fp',
-            flags = 1,
+            flags = 0,
         }, {}, {}, function()
             -- Done
+            ClearPedSecondaryTask(PlayerPedId())
+            DeleteObject(prop)
             local currentHunger = QBCore.Functions.GetPlayerData().metadata['hunger']
             local hungerIncrease = math.random(35, 55)
             local newHunger = currentHunger + hungerIncrease
             if newHunger > 100 then
                 newHunger = 100
             end
-            TriggerEvent('animations:client:EmoteCommandStart', { 'c' })
             TriggerServerEvent('qb-gamz-food:server:addHunger', newHunger)
         end)
     else
         AttachEntityToEntity(prop, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 18905), 0.15, 0.025, 0.010, 270.0, 175.0, 0.0, true, true, false, true, 1, true)
-        TriggerEvent('animations:client:EmoteCommandStart', { 'drink' })
-        QBCore.Functions.Progressbar('drink_something', 'Drinking...', 5000, false, true, {
+        QBCore.Functions.Progressbar('drink_something', 'Drinking...', 2500, false, true, {
             disableMovement = false,
             disableCarMovement = false,
             disableMouse = false,
@@ -117,21 +125,20 @@ function consume(prop, type)
             -- Animation
             animDict = 'mp_player_intdrink',
             anim = 'loop_bottle',
-            flags = 1,
+            flags = 0,
         }, {}, {}, function()
             -- Done
+            ClearPedSecondaryTask(PlayerPedId())
+            DeleteObject(prop)
             local currentThirst = QBCore.Functions.GetPlayerData().metadata['thirst']
             local thirstIncrease = math.random(35, 55)
             local newThirst = currentThirst + thirstIncrease
             if newThirst > 100 then
                 newThirst = 100
             end
-            TriggerEvent('animations:client:EmoteCommandStart', { 'c' })
             TriggerServerEvent('qb-gamz-food:server:addThirst', newThirst)
         end)
     end
-    ClearPedSecondaryTask(PlayerPedId())
-    DeleteObject(prop)
 end
 
 -- Events --

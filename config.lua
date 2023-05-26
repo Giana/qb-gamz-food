@@ -27,14 +27,3 @@ Config.Locations = {
         }
     },
 }
-
-Config.Anims = {
-    ['food'] = {
-        ['animation'] = 'mp_player_int_eat_burger_fp',
-        ['dict'] = 'mp_player_inteat@burger',
-    },
-    ['drink'] = {
-        ['animation'] = 'loop_bottle',
-        ['dict'] = 'mp_player_intdrink',
-    }
-}
